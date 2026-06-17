@@ -9,8 +9,8 @@ const config = {
     hashKey: 'pwFHCqoQZGmho4w6',
     hashIv: 'EkRm7iFT261dpevs',
     payUrl: 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5',
-    returnUrl: 'https://你的render網址.ondigitalocean.app/return', // 付款完成後，綠界會將結果POST到這個網址
-    orderResultUrl: 'https://你的render網址.ondigitalocean.app/result' // 付款完成後，消費者會被導向這個網址
+    returnUrl: 'https://testgogo.onrender.com', // 付款完成後，綠界會將結果POST到這個網址
+    orderResultUrl: 'https://testgogo.onrender.com' // 付款完成後，消費者會被導向這個網址
 };
 
 // --- 產生綠界訂單需要的加密簽章 (CheckMacValue) ---
