@@ -1,12 +1,8 @@
 {
-  "name": "ecpay-test",
+  "name": "your-project-name",
   "version": "1.0.0",
-  "description": "綠界金流測試",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
-  },
   "dependencies": {
-    "express": "^4.18.2"
+    "express": "^4.18.2",
+    "node-ecpay-aio": "^0.2.3" // 這裡必須有這一行
   }
 }
