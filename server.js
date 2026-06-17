@@ -1,15 +1,18 @@
 const express = require('express');
-const Ecpay = require('node-ecpay-aio');
+// 正確的導入方式：直接 require，不需要 new
+const ecpay = require('node-ecpay-aio');
+
 const app = express();
 const port = process.env.PORT || 3000;
 
 // --- 綠界測試環境設定 (使用官方測試金鑰) ---
-const ecpay = new Ecpay({
+// 注意：這裡的設定方式可能因套件版本而異，請參考套件的官方文件
+const ecpayConfig = {
     MerchantID: '3002607',
     HashKey: 'pwFHCqoQZGmho4w6',
     HashIV: 'EkRm7iFT261dpevs',
-    PayGateWay: 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5',
-});
+    PayGateWay: 'https://payment-stage.ecpay.com.tw/Cashier/AioCheckOut/V5'
+};
 
 // --- 解析表單資料 ---
 app.use(express.urlencoded({ extended: true }));
@@ -38,22 +41,24 @@ app.get('/', (req, res) => {
 app.post('/pay', async (req, res) => {
     const tradeNo = `Test${Date.now()}`;
 
-    // 1. 建立訂單參數 (就是一個普通的 JavaScript 物件)
+    // 1. 建立訂單參數
     const baseParam = {
         MerchantTradeNo: tradeNo,
         MerchantTradeDate: new Date().toLocaleString('zh-TW', { hour12: false }).replace(/\//g, '/'),
         TotalAmount: '1',
         TradeDesc: '測試交易',
         ItemName: '測試商品',
-        ReturnURL: 'https://testgogo.onrender.com/return',
-        OrderResultURL: 'https://testgogo.onrender.com/result',
+        ReturnURL: 'https://你的render網址.onrender.com/return', // 記得修改
+        OrderResultURL: 'https://你的render網址.onrender.com/result', // 記得修改
         ChoosePayment: 'Credit',
         EncryptType: '1',
     };
 
     try {
-        // 2. 使用 SDK 的方法建立訂單，它會自動產生 CheckMacValue 並回傳完整的表單 HTML
-        const html = await ecpay.paymentClient.create(baseParam);
+        // 2. 使用 SDK 的方法建立訂單
+        // 注意：這裡的呼叫方式 'ecpay.paymentClient.create' 是假設的，請務必查閱你安裝的套件版本文件
+        // 有些版本可能是 ecpay.create(orderData)
+        const html = await ecpay.paymentClient.create(baseParam, ecpayConfig);
         res.send(html);
     } catch (error) {
         console.error('建立訂單失敗:', error);
@@ -64,7 +69,6 @@ app.post('/pay', async (req, res) => {
 // --- (選用) 接收綠界付款結果通知的端點 ---
 app.post('/return', (req, res) => {
     console.log('收到綠界付款結果通知:', req.body);
-    // 這裡可以使用 SDK 的方法驗證 CheckMacValue
     res.send('1|OK');
 });
 
@@ -74,5 +78,4 @@ app.get('/result', (req, res) => {
 
 app.listen(port, () => {
     console.log(`✅ 測試伺服器運行在 http://localhost:${port}`);
-    console.log('📝 請將 ReturnURL 和 OrderResultURL 替換為你的 Render 實際網址');
 });
